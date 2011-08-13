@@ -1,0 +1,49 @@
+#!/bin/sh
+
+file="Archive/all.txt"
+site=${SITE}
+
+if [ -f $file ]
+then
+    t=`cut -f1 $file | tail -1`
+else
+    mkdir -p Archive
+    # start a long time ago
+    t=`date -j 010123592001 +"%a %b %d %H:%M:%S %Y"`
+    echo "Downloading the entire contents of the DL2 memory, this could take a while"
+fi
+lastfilesecs=`date -j -f "%a %b %d %H:%M:%S %Y" "$t" +%s`
+
+lastnightsecs=`date -j -v -1d 2359 +%s`
+##echo last line in file contains date:
+# test that t contains 23:59:00.
+if ! echo $t | grep '23:59:00' > /dev/null
+then
+	echo file corrupt
+	exit
+fi
+
+if [ $lastnightsecs -ne $lastfilesecs ]
+then
+	startspec=$(( $lastfilesecs +60 ))
+	endspec=$lastnightsecs
+
+	sday=`date -j -f "%s" $startspec "+%d"`
+	smon=`date -j  -f "%s" $startspec   "+%m"`
+	syear=`date -j  -f "%s"  $startspec "+%Y"`
+	
+	eday=`date -j -f "%s"  $endspec "+%d"`
+	emon=`date -j   -f "%s"  $endspec "+%m"`
+	eyear=`date -j  -f "%s" $endspec  "+%Y"`
+        interval=${interval:="60"}
+        query="http://$site/dl2/download/download?start_date_day=${sday}&end_date_year=${eyear}&end_date_day=${eday}&output_type=text-tab-lf&start_date_mon=${smon}&start_date_year=${syear}&end_date_mon=${emon}&sieve_interval=$interval"
+	echo $query
+        lwp-download $query temp$$
+        tail +3 temp$$ >> $file
+        rm temp$$
+else
+    :
+	#echo file up to date
+fi
+
+

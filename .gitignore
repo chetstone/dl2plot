@@ -1,0 +1,11 @@
+*~
+.DS_Store
+tmp/
+Archive/
+temp*
+*.dat
+taa
+tab
+wxsig
+.wxsig
+pscript

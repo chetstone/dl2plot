@@ -1,0 +1,54 @@
+The two scripts in this directory download and plot data from a dl2.
+"plot" is the script invoked by the user. It in turn invokes "update".
+
+Downloaded data is stored in a subdirectory Archive. The archive is
+automatically kept up to date by the scripts. When pplot is run, if
+the archive file is not up to date as of the previous night at
+midnight, any required data is downloaded to bring it up to date.
+
+Then another download is run to get today's data from midnight up to the
+current time.
+
+Then the data is pruned to the desired dates and a gnuplot script is
+generated.  Finally gnuplot is run and the graph is displayed.
+
+The archiving feature makes it unnecessary to worry about the memory
+capacity of the DL2 --- all data is stored on the development machine
+and graphs can be generated to display any set of historical data -
+from a few minutes to years in one graph.
+
+These scripts run on macosx 10.6 using gnuplot from macports, and the
+graph is displayed using Aquaterm. (The version of gnuplot supplied
+with Homebrew does not work with Aquaterm. Instead run gnuplot in an
+Xterm and the data will display in an X11 window. The graph doesn't
+look as nice but it does have a feature of having a live cursor which
+can read out precise values.)
+
+The scripts can probably be ported to linux fairly easily. Use curl or
+wget instead of lwp-download for downloading the data from the
+DL2. The script is also dependent on the options for the 'date'
+command -- it uses them directly so if there's any difference in those
+options it may be necessary to make some adjustments.
+
+Finally, there is a "-w" option which is probably not useful to anyone
+but me, so I am not supplying the scripts which this option
+invokes. It downloads and graphs additional temperature data from some
+Weather Direct sensors, and it relies very specifically on my Mac
+environment using Safari and 1Password.
+
+INSTALLATION AND USE:
+
+Install gnuplot and aquaterm from macports.
+Unpack this archive in a clean directory.
+Edit the plot file enter the appropriate values of TZ and site
+cd to the directory and run ./plot
+For more info on usage, run ./plot -h 
+ (the script always has to run in the current directory -- it will
+  create its data archives in that directory).
+
+FILES
+ README
+ License.txt
+ plot
+ update
+ Examples/*.pdf
